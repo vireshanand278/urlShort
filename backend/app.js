@@ -1,4 +1,10 @@
 import express from "express";
+import dotenv from "dotenv";
+import connectDB from "./src/config/mongo.config.js";
+
+dotenv.config();
+connectDB();
+
 const app=express();
 import {nanoid} from "nanoid";
 
@@ -14,3 +20,6 @@ app.post("/api/create",(req,res)=>{
 app.listen(5000,()=>{
     console.log("Server is runing on http://localhost:5000");
 })
+
+
+
