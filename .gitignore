@@ -1,0 +1,5 @@
+node_modules/
+backend/.env
+
+
+/atlas-credentials (1).env
