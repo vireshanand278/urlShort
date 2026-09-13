@@ -12,7 +12,7 @@ import {nanoid} from "nanoid";
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
-app.post("/api/create",shortUrl);
+app.use("/api/create",shortUrl);
 app.get("/:shortUrl",async(req,res)=>{
     const id=req.params.shortUrl;
     const url=await schema.findOne({short_url:id});
@@ -24,9 +24,10 @@ app.get("/:shortUrl",async(req,res)=>{
     }
 });
 
-app.listen(5000,()=>{
+const port=process.env.PORT;
+app.listen(port,()=>{
     connectDB();
-    console.log("Server is runing on http://localhost:5000");
+    console.log(`Server is runing on ${process.env.APP_URL}`);
 })
 
 
