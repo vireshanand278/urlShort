@@ -1,15 +1,17 @@
-import express from "express";
+
 
 import { generateNanoId } from "../utils/helper.js";
-import schema from "../models/shortUrl.model.js";
 
-export const createShortUrlService=(url)=>{
-    const shortUrl=generateNanoId(7);
-    const newUrl=new schema({
-        full_url:url,
-        short_url:shortUrl
-    });
-    newUrl.save();
-    console.log(url);
+import { saveShortUrl } from "../dao/short_url.js";
+
+export const createShortUrlWithoutUser=async(url)=>{
+    const shortUrl=await generateNanoId(7);
+    await saveShortUrl(shortUrl,url);
+    return process.env.APP_URL+"/"+shortUrl;
+}
+
+export const createShortUrlWithUser=async(url,user)=>{
+    const shortUrl=await generateNanoId(7);
+    await saveShortUrl(shortUrl,url,user);
     return process.env.APP_URL+"/"+shortUrl;
 }

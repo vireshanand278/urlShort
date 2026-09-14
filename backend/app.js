@@ -8,21 +8,15 @@ dotenv.config();
 
 const app=express();
 import {nanoid} from "nanoid";
+import { redirectFromShortUrl } from "./src/crontroller/shortUrl.controller.js";
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
 app.use("/api/create",shortUrl);
-app.get("/:shortUrl",async(req,res)=>{
-    const id=req.params.shortUrl;
-    const url=await schema.findOne({short_url:id});
-   
-    if(url){
-        res.redirect(url.full_url);
-    }else{
-        res.status(404).send("URL not found");
-    }
-});
+
+
+app.get("/:shortUrl",redirectFromShortUrl);
 
 const port=process.env.PORT;
 app.listen(port,()=>{
