@@ -9,6 +9,7 @@ dotenv.config();
 const app=express();
 import {nanoid} from "nanoid";
 import { redirectFromShortUrl } from "./src/crontroller/shortUrl.controller.js";
+import { errorHandler } from "./src/utils/errorHandler.js";
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
@@ -17,6 +18,8 @@ app.use("/api/create",shortUrl);
 
 
 app.get("/:shortUrl",redirectFromShortUrl);
+
+app.use(errorHandler);  
 
 const port=process.env.PORT;
 app.listen(port,()=>{
