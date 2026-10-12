@@ -1,28 +1,78 @@
-import React from "react";
+import HomePage from "./pages/HomePage";
 
-const App=()=>{
+function App() {
+
+  const handleShorten = async (e) => {
+    e.preventDefault();
+
+    setError("");
+    setShortUrl("");
+
+    // Validate URL
+    try {
+      const parsedUrl = new URL(url);
+
+      if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+        throw new Error("Invalid URL");
+      }
+    } catch {
+      setError("Please enter a valid URL.");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:3000/api/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          full_url: url,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to shorten URL.");
+      }
+
+      if (!data.short_url) {
+        throw new Error("Short URL was not returned by the server.");
+      }
+
+      const result = data.short_url.startsWith("http")
+        ? data.short_url
+        : `http://localhost:3000/${data.short_url}`;
+
+      setShortUrl(result);
+    } catch (err) {
+      setError(
+        err.message === "Failed to fetch"
+          ? "Unable to connect to the backend."
+          : err.message
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(shortUrl);
+      alert("Short URL copied!");
+    } catch {
+      setError("Unable to copy the URL.");
+    }
+  };
+
   return (
-  <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
-    <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <h1 className="text-2xl font-bold text-center mb-6">
-        URL Shortener
-      </h1>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label
-            htmlFor="url"
-            className="block text-sm font-medium text-gray-700"          >
-            Enter your URL
-          </label>
-
-          <input
-            type="url"
-            id="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://example.com"
-            required
+    <div>
+      <HomePage/>
+    </div>
+  );
 }
 
 export default App;
